@@ -14,7 +14,7 @@ python3 main.py -id 123456 -f ~/readme.txt -n "A Test Attachment" -v
 
 import argparse
 import os
-from pprint import pprint
+import pprint
 
 # pip install requests
 import requests as requests
@@ -46,32 +46,32 @@ def upload_attachment(ilab_request_id, filename, note=None):
 
     url = f"{API_BASE}attachments?object_class=ServiceItem&id={ilab_request_id}"
 
-    post_files = {'attachment[uploaded_data]': open(filename, 'rb')}
-    if note:
-        post_data = {'attachment[name]': note}
-    else:
-        post_data = None
+    with post_files = {'attachment[uploaded_data]': open(filename, 'rb')}:
+        if note:
+            post_data = {'attachment[name]': note}
+        else:
+            post_data = None
 
-    try:
-        headers = {'Authorization': AUTHORIZATION_TOKEN}
-        response = requests.post(url, headers=headers, files=post_files, data=post_data)
-    except Exception as ex:
-        print(f"Failure sending attachment for {ilab_request_id} to iLab: {filename}")
-        print(ex)
-        raise
+        try:
+            headers = {'Authorization': AUTHORIZATION_TOKEN}
+            response = requests.post(url, headers=headers, files=post_files, data=post_data, timeout=30)
+        except Exception as ex:
+            print(f"Failure sending attachment for {ilab_request_id} to iLab: {filename}")
+            print(ex)
+            raise
 
-    if response.status_code != 200:
-        # if you get a 401 response, almost for sure you don't have the right api bearer token.
-        # if you get a 403 response, almost for sure you don't have access to the iLab request id.
-        print(f"{response} sending attachment for request id {ilab_request_id} to iLab: {filename}")
-        print(f"response.request.url: {response.request.url}")
-        # print(f"response.request.headers: {response.request.headers}")   # WARNING! This could expose your secret bearer token
-        print(f"response.request.body: {response.request.body}")
-        print(f"response.status_code: {response.status_code}")
-        print(f"response.headers: {response.headers}")
-        raise RuntimeError(f"HTTP {response} error sending attachment for request id {ilab_request_id} to iLab: {filename}")
+        if response.status_code != 200:
+            # if you get a 401 response, almost for sure you don't have the right api bearer token.
+            # if you get a 403 response, almost for sure you don't have access to the iLab request id.
+            print(f"{response} sending attachment for request id {ilab_request_id} to iLab: {filename}")
+            print(f"response.request.url: {response.request.url}")
+            # print(f"response.request.headers: {response.request.headers}")   # WARNING! This could expose your secret bearer token
+            print(f"response.request.body: {response.request.body}")
+            print(f"response.status_code: {response.status_code}")
+            print(f"response.headers: {response.headers}")
+            raise RuntimeError(f"HTTP {response} error sending attachment for request id {ilab_request_id} to iLab: {filename}")
 
-    return response.json()
+        return response.json()
 
 
 if __name__ == '__main__':
