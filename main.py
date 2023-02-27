@@ -14,10 +14,10 @@ python3 main.py -id 123456 -f ~/readme.txt -n "A Test Attachment" -v
 
 import argparse
 import os
-import pprint
+from pprint import pprint
 
 # pip install requests
-import requests as requests
+import requests
 
 ###
 # You may want to customize these for your iLab settings.
@@ -47,7 +47,7 @@ def upload_attachment(ilab_request_id, filename, note=None):
     url = f"{API_BASE}attachments?object_class=ServiceItem&id={ilab_request_id}"
 
     with (open(filename, 'rb')) as file_handle:
-        post_files = {'attachment[uploaded_data]': file_handle}:
+        post_files = {'attachment[uploaded_data]': file_handle}
         if note:
             post_data = {'attachment[name]': note}
         else:
