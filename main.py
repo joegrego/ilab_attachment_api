@@ -46,7 +46,8 @@ def upload_attachment(ilab_request_id, filename, note=None):
 
     url = f"{API_BASE}attachments?object_class=ServiceItem&id={ilab_request_id}"
 
-    with post_files = {'attachment[uploaded_data]': open(filename, 'rb')}:
+    with (open(filename, 'rb')) as file_handle:
+        post_files = {'attachment[uploaded_data]': file_handle}:
         if note:
             post_data = {'attachment[name]': note}
         else:
